@@ -14,4 +14,10 @@ public class Item {
 
     @Column(length = 30, nullable = false)
     private String name;
+
+    @Column(length = 100 , nullable = true)
+    private String contents;
+
+    @Column(length = 100 , nullable = false)
+    private String title;
 }
