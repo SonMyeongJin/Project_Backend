@@ -20,4 +20,7 @@ public class Item {
 
     @Column(length = 100 , nullable = false)
     private String title;
+
+    @Column(length = 255 , nullable = true)
+    private String image;
 }
