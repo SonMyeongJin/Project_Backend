@@ -1,6 +1,7 @@
 package org.shopping.backend.service;
 
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -9,7 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Base64;
 
-public class JwtServiceImpl implements JwtService{
+@Service("jwtService")
+public class JwtServiceImpl implements JwtService {
 
     private String secretKey = "a@#!@#@#f219312#@#!@#@#!18gvha912380v12av";
 
@@ -27,11 +29,24 @@ public class JwtServiceImpl implements JwtService{
         Map<String, Object> map = new HashMap<>();
         map.put(key, value);
 
-        JwtBuilder builder = Jwts.builder().setHeader(headerMap)
-                .setClaims(map)
-                .setExpiration(expTime)
-                .signWith(signKey, SignatureAlgorithm.HS256);
+        JwtBuilder builder = Jwts.builder().setHeader(headerMap).setClaims(map).setExpiration(expTime).signWith(signKey, SignatureAlgorithm.HS256);
 
         return builder.compact();
+    }
+
+    @Override
+    public Claims getClaims(String token) {
+        if (token != null) {
+            try {
+                byte[] secretByteKey = secretKey.getBytes();
+                Key signKey = new SecretKeySpec(secretByteKey, SignatureAlgorithm.HS256.getJcaName());
+                return Jwts.parserBuilder().setSigningKey(signKey).build().parseClaimsJwt(token).getBody();
+            } catch (ExpiredJwtException e) {
+                // 만료됐을 때
+            } catch (JwtException e) {
+                // 유효하지 않을 때
+            }
+        }
+        return null;
     }
 }
