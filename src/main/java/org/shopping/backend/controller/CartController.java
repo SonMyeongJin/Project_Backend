@@ -33,7 +33,7 @@ public class CartController {
     ItemRepository itemRepository;
 
     @GetMapping("/api/cart/items")
-    public ResponseEntity getCartItems(@CookieValue(value = "toeken", required = false) String token) {
+    public ResponseEntity getCartItems(@CookieValue(value = "token", required = false) String token) {
 
         if (!jwtService.isValid(token)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -42,7 +42,7 @@ public class CartController {
         int memberId = jwtService.getId(token);
         List<Cart> carts = cartRepository.findByMemberId(memberId);
         List<Integer> itemIds = carts.stream().map(Cart::getItemId).toList();
-        List<Item> items = itemRepository.finByIdIn(itemIds);
+        List<Item> items = itemRepository.findByIdIn(itemIds);
 
         return new ResponseEntity<>(carts, HttpStatus.OK);
     }
